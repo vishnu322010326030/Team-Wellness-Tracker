@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ClearMind — HR Wellness Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=Instrument+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+:root{
+  --ink:#0D1117;
+  --ink2:#1C2333;
+  --ink3:#2D3748;
+  --surface:#F8F7F4;
+  --surface2:#EFEDE8;
+  --surface3:#E4E1DA;
+  --white:#FFFFFF;
+  --accent:#00C896;
+  --accent-dim:#00C89622;
+  --accent-dark:#009970;
+  --amber:#F5A623;
+  --amber-dim:#F5A62320;
+  --rose:#F05C6E;
+  --rose-dim:#F05C6E20;
+  --blue:#4A9EFF;
+  --blue-dim:#4A9EFF18;
+  --text:#0D1117;
+  --muted:#6B7280;
+  --border:#E4E1DA;
+  --shadow:0 2px 20px rgba(13,17,23,0.08);
+  --shadow-md:0 8px 32px rgba(13,17,23,0.12);
+}
+
+body{font-family:'Instrument Sans',sans-serif;background:var(--surface);color:var(--text);min-height:100vh;overflow-x:hidden;}
+
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;}
+
+/* ═══ LOGIN ═══ */
+#login-screen{flex-direction:column;align-items:center;justify-content:center;background:var(--ink);position:relative;overflow:hidden;}
+
+.login-bg-circle{position:absolute;border-radius:50%;pointer-events:none;}
+.lbc1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,200,150,0.08) 0%,transparent 70%);top:-200px;right:-100px;}
+.lbc2{width:400px;height:400px;background:radial-gradient(circle,rgba(74,158,255,0.06) 0%,transparent 70%);bottom:-100px;left:-80px;}
+
+.login-container{width:100%;max-width:460px;padding:20px;position:relative;z-index:1;}
+
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:48px;justify-content:center;}
+.login-logo-mark{width:44px;height:44px;background:var(--accent);border-radius:14px;display:flex;align-items:center;justify-content:center;}
+.login-logo-mark svg{width:24px;height:24px;}
+.login-logo-name{font-family:'Syne',sans-serif;font-size:24px;font-weight:700;color:var(--white);letter-spacing:-0.5px;}
+.login-logo-tag{font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+
+.login-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px;backdrop-filter:blur(20px);}
+
+.login-card h2{font-family:'Syne',sans-serif;font-size:26px;font-weight:600;color:var(--white);margin-bottom:6px;letter-spacing:-0.4px;}
+.login-card p{font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:32px;}
+
+.role-tabs{display:flex;background:rgba(255,255,255,0.06);border-radius:12px;padding:3px;gap:3px;margin-bottom:28px;}
+.rtab{flex:1;padding:10px;border:none;border-radius:9px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:transparent;color:rgba(255,255,255,0.45);transition:all 0.2s;}
+.rtab.active{background:var(--accent);color:var(--ink);font-weight:600;}
+
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:500;color:rgba(255,255,255,0.4);margin-bottom:8px;letter-spacing:0.3px;text-transform:uppercase;}
+.field input{width:100%;padding:13px 16px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:12px;font-family:'Instrument Sans',sans-serif;font-size:15px;color:var(--white);outline:none;transition:all 0.2s;}
+.field input:focus{border-color:var(--accent);background:rgba(0,200,150,0.06);box-shadow:0 0 0 3px rgba(0,200,150,0.12);}
+.field input::placeholder{color:rgba(255,255,255,0.2);}
+
+.extra-field{display:none;}
+.extra-field.show{display:block;}
+
+.login-submit{width:100%;padding:15px;background:var(--accent);color:var(--ink);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;transition:all 0.2s;letter-spacing:-0.2px;}
+.login-submit:hover{background:#00dba8;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,200,150,0.3);}
+
+.login-footer{text-align:center;margin-top:24px;font-size:13px;color:rgba(255,255,255,0.3);}
+.login-footer a{color:var(--accent);text-decoration:none;}
+
+/* ═══ SHARED LAYOUT ═══ */
+#hr-screen,#emp-screen{flex-direction:row;}
+
+.sidebar{width:240px;min-height:100vh;background:var(--ink);display:flex;flex-direction:column;padding:28px 16px;flex-shrink:0;}
+
+.sb-logo{display:flex;align-items:center;gap:10px;padding:0 8px;margin-bottom:36px;}
+.sb-logo-mark{width:34px;height:34px;background:var(--accent);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.sb-logo-mark svg{width:18px;height:18px;}
+.sb-logo-name{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--white);}
+
+.sb-section-label{font-size:10px;font-weight:600;color:rgba(255,255,255,0.2);letter-spacing:1.5px;text-transform:uppercase;padding:0 8px;margin-bottom:8px;margin-top:16px;}
+
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:all 0.2s;border:none;background:transparent;width:100%;text-align:left;font-family:'Instrument Sans',sans-serif;color:rgba(255,255,255,0.45);font-size:14px;font-weight:400;}
+.sb-item svg{width:18px;height:18px;flex-shrink:0;opacity:0.6;}
+.sb-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.8);}
+.sb-item.active{background:rgba(0,200,150,0.12);color:var(--accent);}
+.sb-item.active svg{opacity:1;}
+
+.sb-bottom{margin-top:auto;}
+.sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;cursor:pointer;}
+.sb-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink);flex-shrink:0;}
+.sb-user-info{}
+.sb-user-name{font-size:13px;font-weight:500;color:rgba(255,255,255,0.8);}
+.sb-user-role{font-size:11px;color:rgba(255,255,255,0.3);}
+.sb-logout{width:100%;margin-top:8px;padding:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;color:rgba(255,255,255,0.35);font-family:'Instrument Sans',sans-serif;font-size:13px;cursor:pointer;transition:all 0.2s;}
+.sb-logout:hover{background:rgba(240,92,110,0.1);border-color:rgba(240,92,110,0.3);color:var(--rose);}
+
+.main-content{flex:1;overflow-y:auto;padding:36px 40px;}
+
+/* ═══ HR DASHBOARD ═══ */
+.page-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;}
+.page-title{font-family:'Syne',sans-serif;font-size:26px;font-weight:600;color:var(--text);letter-spacing:-0.5px;}
+.page-title span{color:var(--accent);}
+.page-subtitle{font-size:14px;color:var(--muted);margin-top:3px;}
+
+.add-emp-btn{display:flex;align-items:center;gap:8px;padding:11px 20px;background:var(--ink);color:var(--white);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.add-emp-btn:hover{background:var(--ink2);transform:translateY(-1px);box-shadow:var(--shadow-md);}
+
+/* Alert Banner */
+.alert-banner{display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#FFF5E6,#FFF0DC);border:1px solid #FDDCAA;border-radius:16px;padding:16px 20px;margin-bottom:24px;}
+.alert-icon-box{width:40px;height:40px;background:var(--amber);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.alert-content strong{font-size:14px;font-weight:600;color:#7A4800;display:block;}
+.alert-content span{font-size:13px;color:#A06020;}
+.alert-action{margin-left:auto;padding:8px 16px;background:var(--amber);color:var(--ink);border:none;border-radius:8px;font-family:'Instrument Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;}
+
+/* Stats Row */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
+
+.stat-card{background:var(--white);border-radius:16px;padding:20px 22px;border:1px solid var(--border);transition:transform 0.2s;}
+.stat-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md);}
+.stat-card-label{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px;}
+.stat-card-value{font-family:'Syne',sans-serif;font-size:32px;font-weight:700;line-height:1;margin-bottom:6px;}
+.stat-card-sub{font-size:12px;color:var(--muted);}
+.stat-card-sub.pos{color:var(--accent);}
+.stat-card-sub.neg{color:var(--rose);}
+.stat-card-sub.warn{color:var(--amber);}
+
+/* Employee Table */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--text);}
+.filter-tabs{display:flex;gap:4px;}
+.ftab{padding:6px 14px;border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:500;color:var(--muted);background:var(--white);cursor:pointer;transition:all 0.2s;}
+.ftab.active{background:var(--ink);color:var(--white);border-color:var(--ink);}
+
+.emp-table{background:var(--white);border-radius:16px;border:1px solid var(--border);overflow:hidden;}
+.emp-table-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1.2fr 100px;gap:16px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface);}
+.eth{font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.4px;text-transform:uppercase;}
+
+.emp-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1.2fr 100px;gap:16px;padding:16px 20px;border-bottom:1px solid var(--border);align-items:center;transition:background 0.15s;cursor:pointer;}
+.emp-row:last-child{border-bottom:none;}
+.emp-row:hover{background:#FAFAF8;}
+
+.emp-info{display:flex;align-items:center;gap:12px;}
+.emp-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--white);flex-shrink:0;}
+.emp-name{font-size:14px;font-weight:500;color:var(--text);}
+.emp-dept{font-size:12px;color:var(--muted);}
+
+.emp-cell{font-size:14px;color:var(--text);}
+.emp-cell.muted{color:var(--muted);}
+
+.score-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:600;}
+.score-green{background:rgba(0,200,150,0.1);color:#009970;}
+.score-amber{background:rgba(245,166,35,0.1);color:#C47A00;}
+.score-red{background:rgba(240,92,110,0.1);color:#C0192E;}
+
+.score-dot{width:6px;height:6px;border-radius:50%;}
+.dot-green{background:#00C896;}
+.dot-amber{background:#F5A623;}
+.dot-red{background:#F05C6E;}
+
+.action-btn{padding:7px 14px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-weight:500;color:var(--muted);background:transparent;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all 0.2s;}
+.action-btn:hover{border-color:var(--accent);color:var(--accent);}
+
+/* ═══ HR EMPLOYEE DETAIL ═══ */
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);background:none;border:none;cursor:pointer;font-family:'Instrument Sans',sans-serif;margin-bottom:24px;padding:0;transition:color 0.2s;}
+.back-btn:hover{color:var(--text);}
+
+.detail-header{display:flex;align-items:center;gap:20px;background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px 28px;margin-bottom:24px;}
+.detail-av{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:var(--white);}
+.detail-name{font-family:'Syne',sans-serif;font-size:22px;font-weight:600;color:var(--text);}
+.detail-meta{font-size:14px;color:var(--muted);margin-top:2px;}
+.detail-score-box{margin-left:auto;text-align:center;}
+.detail-score-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.detail-score-val{font-family:'Syne',sans-serif;font-size:42px;font-weight:700;line-height:1;}
+.detail-score-status{font-size:12px;font-weight:600;margin-top:4px;}
+
+.detail-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;}
+
+.form-card{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px;}
+.form-card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.form-card-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-field{margin-bottom:16px;}
+.form-field label{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:7px;letter-spacing:0.3px;text-transform:uppercase;}
+.form-field input,.form-field select{width:100%;padding:11px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;font-family:'Instrument Sans',sans-serif;font-size:14px;color:var(--text);outline:none;transition:all 0.2s;}
+.form-field input:focus,.form-field select:focus{border-color:var(--accent);background:rgba(0,200,150,0.04);box-shadow:0 0 0 3px rgba(0,200,150,0.1);}
+
+.save-btn{width:100%;padding:13px;background:var(--ink);color:var(--white);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all 0.2s;letter-spacing:-0.2px;}
+.save-btn:hover{background:var(--ink2);transform:translateY(-1px);}
+.save-btn.saved{background:var(--accent);color:var(--ink);}
+
+/* Burnout gauge */
+.gauge-card{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px;}
+.gauge-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;margin-bottom:4px;}
+.gauge-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+.gauge-items{display:flex;flex-direction:column;gap:14px;}
+.gauge-item{}
+.gauge-item-top{display:flex;justify-content:space-between;margin-bottom:6px;}
+.gauge-item-name{font-size:13px;font-weight:500;color:var(--text);}
+.gauge-item-val{font-size:13px;color:var(--muted);}
+.gauge-bar-bg{width:100%;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;}
+.gauge-bar-fill{height:100%;border-radius:4px;transition:width 0.6s ease;}
+
+.recommendation-card{background:linear-gradient(135deg,#F0FFF9,#E6FFF4);border:1px solid rgba(0,200,150,0.2);border-radius:16px;padding:18px 20px;margin-top:16px;}
+.rec-title{font-size:13px;font-weight:600;color:#006644;margin-bottom:6px;}
+.rec-text{font-size:13px;color:#008855;line-height:1.6;}
+
+.warning-card{background:linear-gradient(135deg,#FFF5F5,#FFEAEA);border:1px solid rgba(240,92,110,0.2);border-radius:16px;padding:18px 20px;margin-top:16px;}
+.warn-title{font-size:13px;font-weight:600;color:#9B0020;margin-bottom:6px;}
+.warn-text{font-size:13px;color:#C0192E;line-height:1.6;}
+
+/* ═══ EMPLOYEE SCREEN ═══ */
+.emp-welcome{background:linear-gradient(135deg,var(--ink),var(--ink2));border-radius:20px;padding:28px 32px;margin-bottom:24px;position:relative;overflow:hidden;}
+.emp-welcome::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(0,200,150,0.15) 0%,transparent 70%);right:-40px;top:-60px;}
+.emp-welcome-text h2{font-family:'Syne',sans-serif;font-size:22px;font-weight:600;color:var(--white);margin-bottom:4px;}
+.emp-welcome-text p{font-size:14px;color:rgba(255,255,255,0.5);}
+.wellness-score-display{margin-top:20px;display:flex;align-items:center;gap:20px;}
+.wsd-score{font-family:'Syne',sans-serif;font-size:56px;font-weight:700;color:var(--accent);line-height:1;}
+.wsd-info{}
+.wsd-label{font-size:12px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.5px;}
+.wsd-status{font-size:18px;font-weight:600;color:var(--accent);margin-top:2px;}
+.wsd-sub{font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;}
+
+.emp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.emp-stat{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;}
+.es-label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px;}
+.es-value{font-family:'Syne',sans-serif;font-size:26px;font-weight:700;color:var(--text);}
+.es-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+
+.emp-bottom{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+
+.log-card{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:24px;}
+.log-card-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.log-card-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+.log-item{display:flex;align-items:center;gap:14px;padding:12px 14px;background:var(--surface);border-radius:12px;margin-bottom:10px;cursor:pointer;transition:all 0.2s;border:1.5px solid transparent;}
+.log-item:hover{border-color:var(--accent);background:var(--accent-dim);}
+.log-item-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.log-item-info{flex:1;}
+.log-item-name{font-size:14px;font-weight:500;color:var(--text);}
+.log-item-sub{font-size:12px;color:var(--muted);}
+.log-item-count{font-family:'Syne',sans-serif;font-size:20px;font-weight:700;}
+
+.counter-row{display:flex;align-items:center;gap:12px;margin-top:12px;}
+.counter-btn{width:36px;height:36px;border-radius:10px;border:1.5px solid var(--border);background:var(--white);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text);transition:all 0.2s;}
+.counter-btn:hover{border-color:var(--accent);color:var(--accent);}
+.counter-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:700;color:var(--text);min-width:36px;text-align:center;}
+.counter-label{font-size:13px;color:var(--muted);}
+
+.submit-log-btn{width:100%;padding:13px;background:var(--accent);color:var(--ink);border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:16px;transition:all 0.2s;}
+.submit-log-btn:hover{background:#00dba8;transform:translateY(-1px);}
+
+.timeline-list{display:flex;flex-direction:column;gap:10px;}
+.tl-item{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;background:var(--surface);}
+.tl-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tl-content{flex:1;}
+.tl-title{font-size:13px;font-weight:500;color:var(--text);}
+.tl-time{font-size:11px;color:var(--muted);}
+.tl-badge{font-size:11px;font-weight:600;padding:3px 9px;border-radius:10px;}
+
+/* animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp 0.35s ease forwards;opacity:0;}
+.fd1{animation-delay:0.05s}.fd2{animation-delay:0.1s}.fd3{animation-delay:0.15s}.fd4{animation-delay:0.2s}.fd5{animation-delay:0.25s}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ LOGIN ═══════════════════ -->
+<div id="login-screen" class="screen active">
+  <div class="login-bg-circle lbc1"></div>
+  <div class="login-bg-circle lbc2"></div>
+
+  <div class="login-container">
+    <div class="login-logo">
+      <div class="login-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+          <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+        </svg>
+      </div>
+      <div>
+        <div class="login-logo-name">ClearMind</div>
+        <div class="login-logo-tag">Wellness Intelligence</div>
+      </div>
+    </div>
+
+    <div class="login-card">
+      <h2>Sign in to your workspace</h2>
+      <p>Objective wellness tracking, powered by real work data.</p>
+
+      <div class="role-tabs">
+        <button class="rtab active" onclick="switchLoginRole('hr',this)">HR Manager</button>
+        <button class="rtab" onclick="switchLoginRole('employee',this)">Employee</button>
+      </div>
+
+      <div class="field">
+        <label>Work Email</label>
+        <input type="email" placeholder="you@company.com"/>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••"/>
+      </div>
+      <div class="field extra-field" id="hr-code-field">
+        <label>HR Access Code</label>
+        <input type="text" placeholder="e.g. HR-ADMIN-2024"/>
+      </div>
+
+      <button class="login-submit" id="login-submit-btn" onclick="doLogin()">Sign in as HR Manager</button>
+      <div class="login-footer">No account? <a href="#">Request access from your HR team</a></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ HR DASHBOARD ═══════════════════ -->
+<div id="hr-screen" class="screen">
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" width="18" height="18">
+          <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+        </svg>
+      </div>
+      <span class="sb-logo-name">ClearMind</span>
+    </div>
+
+    <div class="sb-section-label">Main</div>
+    <button class="sb-item active" onclick="showHRView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Overview
+    </button>
+    <button class="sb-item" onclick="showHRView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      All Employees
+    </button>
+    <button class="sb-item" onclick="showHRView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      Reports
+    </button>
+
+    <div class="sb-section-label">Alerts</div>
+    <button class="sb-item" onclick="showHRView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg>
+      Burnout Risks
+      <span style="margin-left:auto;background:var(--rose);color:white;font-size:11px;font-weight:700;padding:2px 7px;border-radius:10px;">3</span>
+    </button>
+    <button class="sb-item" onclick="showHRView('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Leave Queue
+    </button>
+
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar" style="background:var(--accent);">SR</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">Sarah R.</div>
+          <div class="sb-user-role">HR Manager</div>
+        </div>
+      </div>
+      <button class="sb-logout" onclick="logout()">← Log out</button>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main-content" id="hr-main">
+
+    <!-- DASHBOARD VIEW -->
+    <div id="hr-dashboard-view">
+      <div class="page-top fade-up fd1">
+        <div>
+          <div class="page-title">Team Wellness <span>Overview</span></div>
+          <div class="page-subtitle">Tuesday, March 17, 2026 · Engineering Department · 18 employees</div>
+        </div>
+        <button class="add-emp-btn" onclick="showDetailView()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><path d="M12 5v14M5 12h14"/></svg>
+          Add Employee
+        </button>
+      </div>
+
+      <div class="alert-banner fade-up fd2">
+        <div class="alert-icon-box">⚠️</div>
+        <div class="alert-content">
+          <strong>3 employees flagged for high burnout risk</strong>
+          <span>Consecutive overwork detected. Recommended: schedule 1:1 check-ins and review leave eligibility.</span>
+        </div>
+        <button class="alert-action">View All →</button>
+      </div>
+
+      <div class="stats-grid fade-up fd3">
+        <div class="stat-card">
+          <div class="stat-card-label">Avg Wellness Score</div>
+          <div class="stat-card-value" style="color:var(--accent)">68</div>
+          <div class="stat-card-sub pos">↑ +4 from last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">At Burnout Risk</div>
+          <div class="stat-card-value" style="color:var(--rose)">3</div>
+          <div class="stat-card-sub neg">↑ +1 from last week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Leave Eligible</div>
+          <div class="stat-card-value" style="color:var(--amber)">5</div>
+          <div class="stat-card-sub warn">Pending approval</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card-label">Healthy &amp; Active</div>
+          <div class="stat-card-value" style="color:var(--accent)">10</div>
+          <div class="stat-card-sub pos">56% of team</div>
+        </div>
+      </div>
+
+      <div class="section-header fade-up fd4">
+        <div class="section-title">Employee Wellness Status</div>
+        <div class="filter-tabs">
+          <button class="ftab active">All</button>
+          <button class="ftab">High Risk</button>
+          <button class="ftab">Leave Eligible</button>
+          <button class="ftab">Healthy</button>
+        </div>
+      </div>
+
+      <div class="emp-table fade-up fd5">
+        <div class="emp-table-header">
+          <div class="eth">Employee</div>
+          <div class="eth">Days Worked</div>
+          <div class="eth">Performance</div>
+          <div class="eth">Meetings/wk</div>
+          <div class="eth">Presentations</div>
+          <div class="eth">Wellness Score</div>
+          <div class="eth">Action</div>
+        </div>
+
+        <!-- Rows -->
+        <div class="emp-row" onclick="showDetailView()">
+          <div class="emp-info">
+            <div class="emp-av" style="background:#E05C6E">TN</div>
+            <div><div class="emp-name">Tom Nguyen</div><div class="emp-dept">Backend Dev</div></div>
+          </div>
+          <div class="emp-cell">18 days 🔴</div>
+          <div class="emp-cell">98%</div>
+          <div class="emp-cell">14</div>
+          <div class="emp-cell">4</div>
+          <div class="emp-cell"><span class="score-badge score-red"><span class="score-dot dot-red"></span>32 — High Risk</span></div>
+          <div><button class="action-btn" onclick="event.stopPropagation();showDetailView()">Edit Data</button></div>
+        </div>
+
+        <div class="emp-row" onclick="showDetailView()">
+          <div class="emp-info">
+            <div class="emp-av" style="background:#F5A623">MR</div>
+            <div><div class="emp-name">Maria Reyes</div><div class="emp-dept">UI Designer</div></div>
+          </div>
+          <div class="emp-cell">12 days 🟡</div>
+          <div class="emp-cell">87%</div>
+          <div class="emp-cell">9</div>
+          <div class="emp-cell">2</div>
+          <div class="emp-cell"><span class="score-badge score-amber"><span class="score-dot dot-amber"></span>51 — Moderate</span></div>
+          <div><button class="action-btn" onclick="event.stopPropagation();showDetailView()">Edit Data</button></div>
+        </div>
+
+        <div class="emp-row" onclick="showDetailView()">
+          <div class="emp-info">
+            <div class="emp-av" style="background:#00C896">AK</div>
+            <div><div class="emp-name">Alex Kim</div><div class="emp-dept">Frontend Dev</div></div>
+          </div>
+          <div class="emp-cell">5 days 🟢</div>
+          <div class="emp-cell">92%</div>
+          <div class="emp-cell">6</div>
+          <div class="emp-cell">1</div>
+          <div class="emp-cell"><span class="score-badge score-green"><span class="score-dot dot-green"></span>78 — Healthy</span></div>
+          <div><button class="action-btn" onclick="event.stopPropagation();showDetailView()">Edit Data</button></div>
+        </div>
+
+        <div class="emp-row" onclick="showDetailView()">
+          <div class="emp-info">
+            <div class="emp-av" style="background:#4A9EFF">LP</div>
+            <div><div class="emp-name">Lisa Park</div><div class="emp-dept">Product Manager</div></div>
+          </div>
+          <div class="emp-cell">20 days 🔴</div>
+          <div class="emp-cell">100%</div>
+          <div class="emp-cell">18</div>
+          <div class="emp-cell">6</div>
+          <div class="emp-cell"><span class="score-badge score-red"><span class="score-dot dot-red"></span>18 — Critical</span></div>
+          <div><button class="action-btn" onclick="event.stopPropagation();showDetailView()">Edit Data</button></div>
+        </div>
+
+        <div class="emp-row" onclick="showDetailView()">
+          <div class="emp-info">
+            <div class="emp-av" style="background:#9B59B6">JW</div>
+            <div><div class="emp-name">James Wu</div><div class="emp-dept">DevOps</div></div>
+          </div>
+          <div class="emp-cell">8 days 🟢</div>
+          <div class="emp-cell">79%</div>
+          <div class="emp-cell">5</div>
+          <div class="emp-cell">0</div>
+          <div class="emp-cell"><span class="score-badge score-green"><span class="score-dot dot-green"></span>72 — Healthy</span></div>
+          <div><button class="action-btn" onclick="event.stopPropagation();showDetailView()">Edit Data</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DETAIL VIEW (hidden by default) -->
+    <div id="hr-detail-view" style="display:none">
+      <button class="back-btn" onclick="showDashboardView()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to overview
+      </button>
+
+      <div class="detail-header fade-up fd1">
+        <div class="detail-av" style="background:#E05C6E">TN</div>
+        <div>
+          <div class="detail-name">Tom Nguyen</div>
+          <div class="detail-meta">Backend Developer · Engineering · Joined Jan 2022</div>
+        </div>
+        <div class="detail-score-box">
+          <div class="detail-score-label">Wellness Score</div>
+          <div class="detail-score-val" style="color:var(--rose)" id="live-score">32</div>
+          <div class="detail-score-status" style="color:var(--rose)" id="live-status">🔴 High Risk</div>
+        </div>
+      </div>
+
+      <div class="detail-grid">
+        <!-- HR Input Form -->
+        <div class="form-card fade-up fd2">
+          <div class="form-card-title">Enter Work Data</div>
+          <div class="form-card-sub">HR enters objective performance and workload data</div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Consecutive Days Worked</label>
+              <input type="number" id="f-days" value="18" min="0" max="30" oninput="recalcScore()"/>
+            </div>
+            <div class="form-field">
+              <label>Performance Score (%)</label>
+              <input type="number" id="f-perf" value="98" min="0" max="100" oninput="recalcScore()"/>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Overtime Hours/Week</label>
+              <input type="number" id="f-ot" value="12" min="0" max="40" oninput="recalcScore()"/>
+            </div>
+            <div class="form-field">
+              <label>Leave Days Taken (Month)</label>
+              <input type="number" id="f-leave" value="0" min="0" max="30" oninput="recalcScore()"/>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label>Department Deadline Pressure</label>
+            <select id="f-pressure" onchange="recalcScore()">
+              <option value="3">Critical Sprint / Crunch</option>
+              <option value="2">Moderate Deadline</option>
+              <option value="1">Normal Workload</option>
+            </select>
+          </div>
+
+          <button class="save-btn" id="save-btn" onclick="saveData()">Save &amp; Update Score</button>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+          <div class="gauge-card fade-up fd3">
+            <div class="gauge-title">Wellness Breakdown</div>
+            <div class="gauge-sub">Calculated from HR + employee data</div>
+            <div class="gauge-items">
+              <div class="gauge-item">
+                <div class="gauge-item-top"><span class="gauge-item-name">Work-life balance</span><span class="gauge-item-val" id="g-balance">18%</span></div>
+                <div class="gauge-bar-bg"><div class="gauge-bar-fill" id="gf-balance" style="width:18%;background:var(--rose)"></div></div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-item-top"><span class="gauge-item-name">Meeting load</span><span class="gauge-item-val">38%</span></div>
+                <div class="gauge-bar-bg"><div class="gauge-bar-fill" style="width:38%;background:var(--amber)"></div></div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-item-top"><span class="gauge-item-name">Performance sustainability</span><span class="gauge-item-val">52%</span></div>
+                <div class="gauge-bar-bg"><div class="gauge-bar-fill" style="width:52%;background:var(--blue)"></div></div>
+              </div>
+              <div class="gauge-item">
+                <div class="gauge-item-top"><span class="gauge-item-name">Recovery rate</span><span class="gauge-item-val">10%</span></div>
+                <div class="gauge-bar-bg"><div class="gauge-bar-fill" style="width:10%;background:var(--rose)"></div></div>
+              </div>
+            </div>
+
+            <div class="warning-card" id="rec-box">
+              <div class="warn-title">⚠️ System Recommendation</div>
+              <div class="warn-text" id="rec-text">Tom has worked 18 consecutive days with 12h overtime weekly. <strong>Immediate leave recommended.</strong> Consider redistributing sprint tasks across 2 team members.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ EMPLOYEE SCREEN ═══════════════════ -->
+<div id="emp-screen" class="screen">
+
+  <div class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-mark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" width="18" height="18">
+          <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z"/>
+          <path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/>
+        </svg>
+      </div>
+      <span class="sb-logo-name">ClearMind</span>
+    </div>
+
+    <div class="sb-section-label">My Wellness</div>
+    <button class="sb-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      My Dashboard
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      My History
+    </button>
+    <button class="sb-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Leave Status
+    </button>
+
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar" style="background:#4A9EFF;">AK</div>
+        <div class="sb-user-info">
+          <div class="sb-user-name">Alex Kim</div>
+          <div class="sb-user-role">Frontend Developer</div>
+        </div>
+      </div>
+      <button class="sb-logout" onclick="logout()">← Log out</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- Welcome Banner -->
+    <div class="emp-welcome fade-up fd1">
+      <div class="emp-welcome-text">
+        <h2>Good morning, Alex 👋</h2>
+        <p>Your wellness data is updated by HR. Log your meetings & presentations to keep it accurate.</p>
+      </div>
+      <div class="wellness-score-display">
+        <div class="wsd-score">78</div>
+        <div class="wsd-info">
+          <div class="wsd-label">Wellness Score</div>
+          <div class="wsd-status">🟢 Healthy</div>
+          <div class="wsd-sub">Updated today by HR</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="emp-stats fade-up fd2">
+      <div class="emp-stat">
+        <div class="es-label">Days Worked</div>
+        <div class="es-value">5</div>
+        <div class="es-sub" style="color:var(--accent)">This streak 🟢</div>
+      </div>
+      <div class="emp-stat">
+        <div class="es-label">Performance</div>
+        <div class="es-value">92%</div>
+        <div class="es-sub">Rated by HR</div>
+      </div>
+      <div class="emp-stat">
+        <div class="es-label">Meetings This Week</div>
+        <div class="es-value" id="emp-meetings">6</div>
+        <div class="es-sub">You logged these</div>
+      </div>
+      <div class="emp-stat">
+        <div class="es-label">Leave Status</div>
+        <div class="es-value" style="font-size:18px;color:var(--accent)">Eligible</div>
+        <div class="es-sub">2 days available</div>
+      </div>
+    </div>
+
+    <!-- Bottom -->
+    <div class="emp-bottom fade-up fd3">
+
+      <!-- Log Activity -->
+      <div class="log-card">
+        <div class="log-card-title">Log Your Activity</div>
+        <div class="log-card-sub">Your honest data helps HR get an accurate wellness picture</div>
+
+        <div style="margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">Meetings attended this week</div>
+          <div class="counter-row">
+            <button class="counter-btn" onclick="changeCount('meetings',-1)">−</button>
+            <span class="counter-val" id="cnt-meetings">6</span>
+            <button class="counter-btn" onclick="changeCount('meetings',1)">+</button>
+            <span class="counter-label">meetings</span>
+          </div>
+        </div>
+
+        <div style="margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:10px;">Presentations given this week</div>
+          <div class="counter-row">
+            <button class="counter-btn" onclick="changeCount('presentations',-1)">−</button>
+            <span class="counter-val" id="cnt-presentations">1</span>
+            <button class="counter-btn" onclick="changeCount('presentations',1)">+</button>
+            <span class="counter-label">presentations</span>
+          </div>
+        </div>
+
+        <div class="form-field">
+          <label style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:7px;display:block;letter-spacing:0.3px;text-transform:uppercase;">Any notes for HR? (optional)</label>
+          <input type="text" style="width:100%;padding:11px 14px;background:var(--surface);border:1.5px solid var(--border);border-radius:10px;font-family:'Instrument Sans',sans-serif;font-size:14px;color:var(--text);outline:none;" placeholder="e.g. Had a very heavy sprint this week..."/>
+        </div>
+
+        <button class="submit-log-btn" onclick="submitLog()">Submit This Week's Log →</button>
+      </div>
+
+      <!-- Activity Timeline -->
+      <div class="log-card">
+        <div class="log-card-title">Recent Activity</div>
+        <div class="log-card-sub">What HR has recorded for you this month</div>
+
+        <div class="timeline-list">
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--accent)"></div>
+            <div class="tl-content">
+              <div class="tl-title">Wellness score updated to 78</div>
+              <div class="tl-time">Today, 9:00 AM · by HR</div>
+            </div>
+            <span class="tl-badge" style="background:rgba(0,200,150,0.1);color:#009970;">Healthy</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--blue)"></div>
+            <div class="tl-content">
+              <div class="tl-title">6 meetings logged by you</div>
+              <div class="tl-time">Yesterday · Self-reported</div>
+            </div>
+            <span class="tl-badge" style="background:var(--blue-dim);color:var(--blue);">Logged</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--amber)"></div>
+            <div class="tl-content">
+              <div class="tl-title">Performance rated 92% by HR</div>
+              <div class="tl-time">Mar 14 · by HR Manager</div>
+            </div>
+            <span class="tl-badge" style="background:var(--amber-dim);color:#C47A00;">Rated</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--accent)"></div>
+            <div class="tl-content">
+              <div class="tl-title">Leave eligibility confirmed</div>
+              <div class="tl-time">Mar 13 · System</div>
+            </div>
+            <span class="tl-badge" style="background:rgba(0,200,150,0.1);color:#009970;">Eligible</span>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot" style="background:var(--muted)"></div>
+            <div class="tl-content">
+              <div class="tl-title">Joined sprint — 5 day streak started</div>
+              <div class="tl-time">Mar 11 · HR</div>
+            </div>
+            <span class="tl-badge" style="background:var(--surface2);color:var(--muted);">Info</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let loginRole = 'hr';
+let meetingCount = 6;
+let presentationCount = 1;
+
+function switchLoginRole(role, btn) {
+  loginRole = role;
+  document.querySelectorAll('.rtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const sub = document.getElementById('login-submit-btn');
+  const hrField = document.getElementById('hr-code-field');
+  if (role === 'hr') {
+    sub.textContent = 'Sign in as HR Manager';
+    hrField.classList.add('show');
+  } else {
+    sub.textContent = 'Sign in as Employee';
+    hrField.classList.remove('show');
+  }
+}
+
+function doLogin() {
+  show(loginRole === 'hr' ? 'hr-screen' : 'emp-screen');
+}
+
+function logout() { show('login-screen'); }
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function showHRView(view, btn) {
+  document.querySelectorAll('.sb-item').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+function showDetailView() {
+  document.getElementById('hr-dashboard-view').style.display = 'none';
+  document.getElementById('hr-detail-view').style.display = 'block';
+}
+
+function showDashboardView() {
+  document.getElementById('hr-dashboard-view').style.display = 'block';
+  document.getElementById('hr-detail-view').style.display = 'none';
+}
+
+function recalcScore() {
+  const days = parseInt(document.getElementById('f-days').value) || 0;
+  const perf = parseInt(document.getElementById('f-perf').value) || 0;
+  const ot   = parseInt(document.getElementById('f-ot').value) || 0;
+  const leave= parseInt(document.getElementById('f-leave').value) || 0;
+  const pres = parseInt(document.getElementById('f-pressure').value) || 1;
+
+  // Burnout risk score (higher = worse)
+  let risk = (days * 2) + (ot * 1.5) + (pres * 8) - (leave * 5) - (perf * 0.1);
+  let score = Math.max(0, Math.min(100, Math.round(100 - risk)));
+
+  const scoreEl = document.getElementById('live-score');
+  const statusEl = document.getElementById('live-status');
+  const recBox = document.getElementById('rec-box');
+  const recText = document.getElementById('rec-text');
+  const balBar = document.getElementById('gf-balance');
+  const balVal = document.getElementById('g-balance');
+
+  scoreEl.textContent = score;
+  const balPct = Math.max(5, Math.min(95, Math.round(score * 0.6)));
+  balBar.style.width = balPct + '%';
+  balVal.textContent = balPct + '%';
+
+  if (score < 40) {
+    scoreEl.style.color = 'var(--rose)';
+    statusEl.textContent = score < 25 ? '🔴 Critical Risk' : '🔴 High Risk';
+    statusEl.style.color = 'var(--rose)';
+    recBox.className = 'warning-card';
+    recBox.querySelector('.warn-title').textContent = '⚠️ System Recommendation';
+    recText.innerHTML = `Score is critically low at <strong>${score}</strong>. Immediate intervention required — consider mandatory leave and workload redistribution.`;
+    balBar.style.background = 'var(--rose)';
+  } else if (score < 65) {
+    scoreEl.style.color = 'var(--amber)';
+    statusEl.textContent = '🟡 Moderate Risk';
+    statusEl.style.color = 'var(--amber)';
+    recBox.className = 'warning-card';
+    recBox.style.background = 'linear-gradient(135deg,#FFFBF0,#FFF6DC)';
+    recBox.style.borderColor = 'rgba(245,166,35,0.3)';
+    recBox.querySelector('.warn-title').style.color = '#7A4800';
+    recBox.querySelector('.warn-title').textContent = '⚡ Monitor Closely';
+    recText.innerHTML = `Wellness score is <strong>${score}</strong>. Recommend a 1:1 check-in and reviewing upcoming sprint assignments.`;
+    recText.style.color = '#A06020';
+    balBar.style.background = 'var(--amber)';
+  } else {
+    scoreEl.style.color = 'var(--accent)';
+    statusEl.textContent = '🟢 Healthy';
+    statusEl.style.color = 'var(--accent)';
+    recBox.className = 'recommendation-card';
+    recBox.querySelector('.warn-title, .rec-title').textContent = '✅ Looking Good';
+    recText.innerHTML = `Wellness score is <strong>${score}</strong>. Employee is in a healthy range. Continue monitoring regularly.`;
+    balBar.style.background = 'var(--accent)';
+  }
+}
+
+function saveData() {
+  const btn = document.getElementById('save-btn');
+  btn.textContent = '✓ Saved & Score Updated';
+  btn.classList.add('saved');
+  setTimeout(() => {
+    btn.textContent = 'Save & Update Score';
+    btn.classList.remove('saved');
+  }, 2500);
+}
+
+function changeCount(type, delta) {
+  if (type === 'meetings') {
+    meetingCount = Math.max(0, meetingCount + delta);
+    document.getElementById('cnt-meetings').textContent = meetingCount;
+    document.getElementById('emp-meetings').textContent = meetingCount;
+  } else {
+    presentationCount = Math.max(0, presentationCount + delta);
+    document.getElementById('cnt-presentations').textContent = presentationCount;
+  }
+}
+
+function submitLog() {
+  const btn = document.querySelector('.submit-log-btn');
+  btn.textContent = '✓ Log submitted to HR!';
+  btn.style.background = '#009970';
+  setTimeout(() => {
+    btn.textContent = 'Submit This Week\'s Log →';
+    btn.style.background = '';
+  }, 2500);
+}
+</script>
+</body>
+</html>
