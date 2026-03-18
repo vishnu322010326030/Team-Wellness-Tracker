@@ -1,0 +1,35 @@
+:root {
+  --ink: #0D1117;
+  --ink2: #1C2333;
+  --surface: #F8F7F4;
+  --surface2: #EFEDE8;
+  --surface3: #E4E1DA;
+  --white: #FFFFFF;
+  --accent: #00C896;
+  --accent-dim: rgba(0,200,150,0.12);
+  --accent-dark: #009970;
+  --amber: #F5A623;
+  --amber-dim: rgba(245,166,35,0.12);
+  --rose: #F05C6E;
+  --rose-dim: rgba(240,92,110,0.12);
+  --blue: #4A9EFF;
+  --blue-dim: rgba(74,158,255,0.12);
+  --text: #0D1117;
+  --muted: #6B7280;
+  --border: #E4E1DA;
+  --shadow: 0 2px 20px rgba(13,17,23,0.08);
+  --shadow-md: 0 8px 32px rgba(13,17,23,0.12);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Instrument Sans', 'Segoe UI', sans-serif;
+  background: var(--surface);
+  color: var(--text);
+  min-height: 100vh;
+}
