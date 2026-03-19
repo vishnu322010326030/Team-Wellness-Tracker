@@ -48,7 +48,7 @@ function Sidebar({ role, userName, userRole }) {
 
           <button
             className={isActive('/hr/employees') ? 'sb-item active' : 'sb-item'}
-            onClick={() => navigate('/hr')}
+            onClick={() => navigate('/hr/employees')}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
