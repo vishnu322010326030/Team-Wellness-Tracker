@@ -8,6 +8,17 @@ import HRBurnout        from './pages/HRBurnout';
 import HRLeaveQueue     from './pages/HRLeaveQueue';
 import EmpHistory       from './pages/EmpHistory';
 import EmpLeave         from './pages/EmpLeave';
+// updated routes v2
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Login            from './pages/Login';
+import HRDashboard      from './pages/HRDashboard';
+import HREmployeeDetail from './pages/HREmployeeDetail';
+import EmployeeDashboard from './pages/EmployeeDashboard';
+import HRReports        from './pages/HRReports';
+import HRBurnout        from './pages/HRBurnout';
+import HRLeaveQueue     from './pages/HRLeaveQueue';
+import EmpHistory       from './pages/EmpHistory';
+import EmpLeave         from './pages/EmpLeave';
 
 function App() {
   return (
