@@ -1,13 +1,18 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Sidebar.css';
 
 function Sidebar({ role, userName, userRole }) {
-  const navigate = useNavigate();
+  const navigate  = useNavigate();
+  const location  = useLocation();
 
   function handleLogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/');
+  }
+
+  function isActive(path) {
+    return location.pathname === path;
   }
 
   return (
@@ -28,7 +33,10 @@ function Sidebar({ role, userName, userRole }) {
       {role === 'hr' && (
         <>
           <div className="sb-section-label">Main</div>
-          <button className="sb-item active" onClick={() => navigate('/hr')}>
+          <button
+            className={isActive('/hr') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/hr')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
               <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -37,7 +45,11 @@ function Sidebar({ role, userName, userRole }) {
             </svg>
             Overview
           </button>
-          <button className="sb-item" onClick={() => navigate('/hr')}>
+
+          <button
+            className={isActive('/hr/employees') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/hr')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
               <circle cx="9" cy="7" r="4"/>
@@ -45,7 +57,11 @@ function Sidebar({ role, userName, userRole }) {
             </svg>
             All Employees
           </button>
-          <button className="sb-item" onClick={() => navigate('/hr')}>
+
+          <button
+            className={isActive('/hr/reports') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/hr/reports')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <path d="M18 20V10M12 20V4M6 20v-6"/>
             </svg>
@@ -53,7 +69,11 @@ function Sidebar({ role, userName, userRole }) {
           </button>
 
           <div className="sb-section-label">Alerts</div>
-          <button className="sb-item" onClick={() => navigate('/hr')}>
+
+          <button
+            className={isActive('/hr/burnout') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/hr/burnout')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 01-3.46 0"/>
@@ -61,7 +81,11 @@ function Sidebar({ role, userName, userRole }) {
             Burnout Risks
             <span className="sb-badge">3</span>
           </button>
-          <button className="sb-item" onClick={() => navigate('/hr')}>
+
+          <button
+            className={isActive('/hr/leave') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/hr/leave')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <rect x="3" y="4" width="18" height="18" rx="2"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
@@ -75,7 +99,10 @@ function Sidebar({ role, userName, userRole }) {
       {role === 'employee' && (
         <>
           <div className="sb-section-label">My Wellness</div>
-          <button className="sb-item active" onClick={() => navigate('/employee')}>
+          <button
+            className={isActive('/employee') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/employee')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
               <rect x="14" y="3" width="7" height="7" rx="1"/>
@@ -84,13 +111,21 @@ function Sidebar({ role, userName, userRole }) {
             </svg>
             My Dashboard
           </button>
-          <button className="sb-item">
+
+          <button
+            className={isActive('/employee/history') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/employee/history')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <path d="M18 20V10M12 20V4M6 20v-6"/>
             </svg>
             My History
           </button>
-          <button className="sb-item">
+
+          <button
+            className={isActive('/employee/leave') ? 'sb-item active' : 'sb-item'}
+            onClick={() => navigate('/employee/leave')}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" width="18" height="18">
               <rect x="3" y="4" width="18" height="18" rx="2"/>
               <path d="M16 2v4M8 2v4M3 10h18"/>
@@ -122,6 +157,5 @@ function Sidebar({ role, userName, userRole }) {
     </div>
   );
 }
-
 
 export default Sidebar;
