@@ -10,7 +10,7 @@ import HRLeaveQueue      from './pages/HRLeaveQueue';
 import EmployeeDashboard from './pages/EmployeeDashboard';
 import EmpHistory        from './pages/EmpHistory';
 import EmpLeave          from './pages/EmpLeave';
-
+import Register from './pages/Register';
 function App() {
   return (
     <BrowserRouter>
@@ -25,6 +25,7 @@ function App() {
         <Route path="/employee"          element={<EmployeeDashboard />} />
         <Route path="/employee/history"  element={<EmpHistory />} />
         <Route path="/employee/leave"    element={<EmpLeave />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
     </BrowserRouter>
   );

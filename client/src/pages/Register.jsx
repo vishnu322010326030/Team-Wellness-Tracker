@@ -3,18 +3,19 @@ import { useNavigate } from 'react-router-dom';
 import API from '../api';
 import './Login.css';
 
-function Login() {
+function Register() {
   const navigate = useNavigate();
-  const [role, setRole]       = useState('hr');
-  const [email, setEmail]     = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError]     = useState('');
-  const [loading, setLoading] = useState(false);
-  
 
-  async function handleLogin() {
-    // Basic validation
-    if (!email || !password) {
+  const [name,     setName]     = useState('');
+  const [email,    setEmail]    = useState('');
+  const [password, setPassword] = useState('');
+  const [role,     setRole]     = useState('employee');
+  const [error,    setError]    = useState('');
+  const [loading,  setLoading]  = useState(false);
+  const [success,  setSuccess]  = useState(false);
+
+  async function handleRegister() {
+    if (!name || !email || !password) {
       setError('Please fill in all fields');
       return;
     }
@@ -23,22 +24,18 @@ function Login() {
       setLoading(true);
       setError('');
 
-      // Call the real API
-      const res = await API.post('/auth/login', { email, password });
+      await API.post('/auth/register', {
+        name,
+        email,
+        password,
+        role
+      });
 
-      // Save token and user info
-      localStorage.setItem('token', res.data.token);
-      localStorage.setItem('user',  JSON.stringify(res.data.user));
-
-      // Navigate based on role
-      if (res.data.user.role === 'hr') {
-        navigate('/hr');
-      } else {
-        navigate('/employee');
-      }
+      setSuccess(true);
+      setTimeout(() => navigate('/'), 2000);
 
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Try again.');
+      setError(err.response?.data?.message || 'Registration failed. Try again.');
     } finally {
       setLoading(false);
     }
@@ -67,31 +64,49 @@ function Login() {
 
         {/* Card */}
         <div className="login-card">
-          <h2>Sign in to your workspace</h2>
-          <p>Objective wellness tracking, powered by real work data.</p>
+          <h2>Create your account</h2>
+          <p>Join your team's wellness tracker.</p>
 
           {/* Role Toggle */}
           <div className="role-tabs">
-            <button
-              className={role === 'hr' ? 'rtab active' : 'rtab'}
-              onClick={() => setRole('hr')}
-            >
-              HR Manager
-            </button>
             <button
               className={role === 'employee' ? 'rtab active' : 'rtab'}
               onClick={() => setRole('employee')}
             >
               Employee
             </button>
+            <button
+              className={role === 'hr' ? 'rtab active' : 'rtab'}
+              onClick={() => setRole('hr')}
+            >
+              HR Manager
+            </button>
           </div>
 
-          {/* Error message */}
+          {/* Success Message */}
+          {success && (
+            <div className="success-msg">
+              ✅ Account created! Redirecting to login...
+            </div>
+          )}
+
+          {/* Error Message */}
           {error && (
             <div className="error-msg">{error}</div>
           )}
 
           {/* Fields */}
+          <div className="field">
+            <label>Full Name</label>
+            <input
+              type="text"
+              placeholder="e.g. Alex Kim"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleRegister()}
+            />
+          </div>
+
           <div className="field">
             <label>Work Email</label>
             <input
@@ -99,6 +114,7 @@ function Login() {
               placeholder="you@company.com"
               value={email}
               onChange={e => setEmail(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleRegister()}
             />
           </div>
 
@@ -109,24 +125,21 @@ function Login() {
               placeholder="••••••••"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleLogin()}
+              onKeyDown={e => e.key === 'Enter' && handleRegister()}
             />
-          </div>
-          <div className="login-footer">
-            Don't have an account?{' '}
-            <a href="#" onClick={() => navigate('/register')}>Create one free</a>
           </div>
 
           <button
             className="login-submit"
-            onClick={handleLogin}
-            disabled={loading}
+            onClick={handleRegister}
+            disabled={loading || success}
           >
-            {loading ? 'Signing in...' : `Sign in as ${role === 'hr' ? 'HR Manager' : 'Employee'}`}
+            {loading ? 'Creating account...' : 'Create Account'}
           </button>
 
           <div className="login-footer">
-            No account? <a href="#">Request access from your HR team</a>
+            Already have an account?{' '}
+            <a href="#" onClick={() => navigate('/')}>Sign in</a>
           </div>
 
         </div>
@@ -135,4 +148,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default Register;
